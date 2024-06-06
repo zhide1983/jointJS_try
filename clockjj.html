@@ -9,6 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.0/backbone-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/3.4.2/joint.min.js"></script>
+    <script src="script.js"></script>
 </head>
 <body>
     <div id="paper" style="width: 800px; height: 600px; background-color: #F0F0F0; margin: 0 auto;"></div>
@@ -124,12 +125,15 @@
 
             // 添加工具
             graph.getLinks().forEach(function(link) {
-                var verticesTool = new joint.linkTools.Vertices();
-                var segmentsTool = new joint.linkTools.Segments();
-                var removeButton = new joint.linkTools.Remove();
+                var verticesTool = new joint.linkTools.Vertices({
+                    removeVertex: true
+                });
+                var segmentsTool = new joint.linkTools.Segments({
+                    snapRadius: 10
+                });
 
                 var toolsView = new joint.dia.ToolsView({
-                    tools: [verticesTool, segmentsTool, removeButton]
+                    tools: [segmentsTool, verticesTool]
                 });
 
                 link.findView(paper).addTools(toolsView);
