@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>JointJS Example</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/3.4.2/joint.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.0/backbone-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/3.4.2/joint.min.js"></script>
+</head>
+<body>
+    <div id="paper" style="width: 800px; height: 600px; background-color: #F0F0F0; margin: 0 auto;"></div>
+    <button onclick="exportSVG()">Export as SVG</button>
+    <script>
+        $(document).ready(function() {
+            var graph = new joint.dia.Graph;
+            var paper = new joint.dia.Paper({
+                el: $('#paper'),
+                model: graph,
+                width: 800,
+                height: 600,
+                gridSize: 10,
+                drawGrid: true,
+                background: {
+                    color: 'white'
+                },
+                interactive: {
+                    linkMove: true
+                },
+                defaultLink: new joint.shapes.standard.Link({
+                    attrs: {
+                        line: {
+                            stroke: 'black',
+                            strokeWidth: 2,
+                            targetMarker: {
+                                type: 'path',
+                                d: 'M 10 -5 0 0 10 5 Z'
+                            }
+                        }
+                    },
+                    router: {
+                        name: 'manhattan'
+                    }
+                })
+            });
+
+            // 创建状态（矩形）
+            var clockSource = new joint.shapes.standard.Rectangle();
+            clockSource.position(50, 50);
+            clockSource.resize(100, 40);
+            clockSource.attr({
+                body: {
+                    fill: 'lightblue'
+                },
+                label: {
+                    text: 'Clock Source',
+                    fill: 'black'
+                }
+            });
+            clockSource.addTo(graph);
+
+            var buffer1 = new joint.shapes.standard.Rectangle();
+            buffer1.position(200, 50);
+            buffer1.resize(100, 40);
+            buffer1.attr({
+                body: {
+                    fill: 'lightgreen'
+                },
+                label: {
+                    text: 'Buffer 1',
+                    fill: 'black'
+                }
+            });
+            buffer1.addTo(graph);
+
+            var divider1 = new joint.shapes.standard.Rectangle();
+            divider1.position(350, 50);
+            divider1.resize(100, 40);
+            divider1.attr({
+                body: {
+                    fill: 'lightyellow'
+                },
+                label: {
+                    text: 'Divider 1',
+                    fill: 'black'
+                }
+            });
+            divider1.addTo(graph);
+
+            var mux1 = new joint.shapes.standard.Rectangle();
+            mux1.position(500, 50);
+            mux1.resize(100, 40);
+            mux1.attr({
+                body: {
+                    fill: 'lightcoral'
+                },
+                label: {
+                    text: 'Clock Mux 1',
+                    fill: 'black'
+                }
+            });
+            mux1.addTo(graph);
+
+            // 创建连接线
+            var link1 = new joint.shapes.standard.Link();
+            link1.source(clockSource, { anchor: { name: 'center' } });
+            link1.target(buffer1, { anchor: { name: 'center' } });
+            link1.router('manhattan');
+            link1.addTo(graph);
+
+            var link2 = new joint.shapes.standard.Link();
+            link2.source(buffer1, { anchor: { name: 'center' } });
+            link2.target(divider1, { anchor: { name: 'center' } });
+            link2.router('manhattan');
+            link2.addTo(graph);
+
+            var link3 = new joint.shapes.standard.Link();
+            link3.source(divider1, { anchor: { name: 'center' } });
+            link3.target(mux1, { anchor: { name: 'center' } });
+            link3.router('manhattan');
+            link3.addTo(graph);
+
+            // 添加工具
+            graph.getLinks().forEach(function(link) {
+                var verticesTool = new joint.linkTools.Vertices();
+                var segmentsTool = new joint.linkTools.Segments();
+                var removeButton = new joint.linkTools.Remove();
+
+                var toolsView = new joint.dia.ToolsView({
+                    tools: [verticesTool, segmentsTool, removeButton]
+                });
+
+                link.findView(paper).addTools(toolsView);
+            });
+
+            // 创建导出SVG的函数
+            function exportSVG() {
+                var svg = paper.svg;
+                var serializer = new XMLSerializer();
+                var svgString = serializer.serializeToString(svg);
+
+                var a = document.createElement('a');
+                var blob = new Blob([svgString], {type: 'image/svg+xml'});
+                a.href = URL.createObjectURL(blob);
+                a.download = 'clock_tree.svg';
+                a.click();
+            }
+
+            window.exportSVG = exportSVG; // 确保函数在全局范围内可访问
+        });
+    </script>
+</body>
+</html>
