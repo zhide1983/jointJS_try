@@ -1,3 +1,4 @@
+
 $(document).ready(function() {
     var graph = new joint.dia.Graph;
     var paper = new joint.dia.Paper({
@@ -30,89 +31,91 @@ $(document).ready(function() {
         })
     });
 
-    // åˆ›å»ºçŠ¶æ€ï¼ˆçŸ©å½¢ï¼‰
-    var clockSource = new joint.shapes.standard.Rectangle();
-    clockSource.position(50, 50);
-    clockSource.resize(100, 40);
-    clockSource.attr({
-        body: {
-            fill: 'lightblue'
-        },
-        label: {
-            text: 'Clock Source',
-            fill: 'black'
-        }
-    });
-    clockSource.addTo(graph);
+    
+        var clock_source = new joint.shapes.standard.Rectangle();
+        clock_source.position(50, 50);
+        clock_source.resize(100, 40);
+        clock_source.attr({
+            body: {
+                fill: 'lightblue'
+            },
+            label: {
+                text: 'clock_source',
+                fill: 'black'
+            }
+        });
+        clock_source.addTo(graph);
+        
+        var buffer1 = new joint.shapes.standard.Rectangle();
+        buffer1.position(200, 50);
+        buffer1.resize(100, 40);
+        buffer1.attr({
+            body: {
+                fill: 'lightgreen'
+            },
+            label: {
+                text: 'buffer1',
+                fill: 'black'
+            }
+        });
+        buffer1.addTo(graph);
+        
+        var divider1 = new joint.shapes.standard.Rectangle();
+        divider1.position(350, 50);
+        divider1.resize(100, 40);
+        divider1.attr({
+            body: {
+                fill: 'lightyellow'
+            },
+            label: {
+                text: 'divider1',
+                fill: 'black'
+            }
+        });
+        divider1.addTo(graph);
+        
+        var mux1 = new joint.shapes.standard.Rectangle();
+        mux1.position(500, 50);
+        mux1.resize(100, 40);
+        mux1.attr({
+            body: {
+                fill: 'lightcoral'
+            },
+            label: {
+                text: 'mux1',
+                fill: 'black'
+            }
+        });
+        mux1.addTo(graph);
+        
 
-    var buffer1 = new joint.shapes.standard.Rectangle();
-    buffer1.position(200, 50);
-    buffer1.resize(100, 40);
-    buffer1.attr({
-        body: {
-            fill: 'lightgreen'
-        },
-        label: {
-            text: 'Buffer 1',
-            fill: 'black'
-        }
-    });
-    buffer1.addTo(graph);
+    
+        var link_clock_source_buffer1 = new joint.shapes.standard.Link();
+        link_clock_source_buffer1.source(clock_source, { anchor: { name: 'center' }});
+        link_clock_source_buffer1.target(buffer1, { anchor: { name: 'center' }});
+        link_clock_source_buffer1.router('manhattan');
+        link_clock_source_buffer1.addTo(graph);
+        
+        var link_buffer1_divider1 = new joint.shapes.standard.Link();
+        link_buffer1_divider1.source(buffer1, { anchor: { name: 'center' }});
+        link_buffer1_divider1.target(divider1, { anchor: { name: 'center' }});
+        link_buffer1_divider1.router('manhattan');
+        link_buffer1_divider1.addTo(graph);
+        
+        var link_divider1_mux1 = new joint.shapes.standard.Link();
+        link_divider1_mux1.source(divider1, { anchor: { name: 'center' }});
+        link_divider1_mux1.target(mux1, { anchor: { name: 'center' }});
+        link_divider1_mux1.router('manhattan');
+        link_divider1_mux1.addTo(graph);
+        
 
-    var divider1 = new joint.shapes.standard.Rectangle();
-    divider1.position(350, 50);
-    divider1.resize(100, 40);
-    divider1.attr({
-        body: {
-            fill: 'lightyellow'
-        },
-        label: {
-            text: 'Divider 1',
-            fill: 'black'
-        }
-    });
-    divider1.addTo(graph);
-
-    var mux1 = new joint.shapes.standard.Rectangle();
-    mux1.position(500, 50);
-    mux1.resize(100, 40);
-    mux1.attr({
-        body: {
-            fill: 'lightcoral'
-        },
-        label: {
-            text: 'Clock Mux 1',
-            fill: 'black'
-        }
-    });
-    mux1.addTo(graph);
-
-    // åˆ›å»ºè¿æ¥çº¿
-    var link1 = new joint.shapes.standard.Link();
-    link1.source(clockSource, { anchor: { name: 'center' } });
-    link1.target(buffer1, { anchor: { name: 'center' } });
-    link1.router('manhattan');
-    link1.addTo(graph);
-
-    var link2 = new joint.shapes.standard.Link();
-    link2.source(buffer1, { anchor: { name: 'center' } });
-    link2.target(divider1, { anchor: { name: 'center' } });
-    link2.router('manhattan');
-    link2.addTo(graph);
-
-    var link3 = new joint.shapes.standard.Link();
-    link3.source(divider1, { anchor: { name: 'center' } });
-    link3.target(mux1, { anchor: { name: 'center' } });
-    link3.router('manhattan');
-    link3.addTo(graph);
-
-    // æ·»åŠ å·¥å…·
+    // Ìí¼Ó¹¤¾ß
     graph.getLinks().forEach(function(link) {
         var verticesTool = new joint.linkTools.Vertices({
-            removeVertex: true // å…è®¸åˆ é™¤é¡¶ç‚¹
+            removeVertex: true // ÔÊĞíÉ¾³ı¶¥µã
         });
         var segmentsTool = new joint.linkTools.Segments({
-            snapRadius: 10 // é¼ æ ‡é è¿‘æ—¶ç§»åŠ¨æ•´æ¡çº¿æ®µè€Œä¸æ˜¯æ·»åŠ é¡¶ç‚¹
+            snapRadius: 10 // Êó±ê¿¿½üÊ±ÒÆ¶¯ÕûÌõÏß¶Î¶ø²»ÊÇÌí¼Ó¶¥µã
         });
 
         var toolsView = new joint.dia.ToolsView({
@@ -122,18 +125,18 @@ $(document).ready(function() {
         link.findView(paper).addTools(toolsView);
     });
 
-    // åˆ›å»ºå¯¼å‡ºSVGçš„å‡½æ•°
+    // ´´½¨µ¼³öSVGµÄº¯Êı
     window.exportSVG = function() {
-        // éšè—å¯¼èˆªç‚¹
+        // Òş²Øµ¼º½µã
         $('.joint-cell.joint-link .marker-vertices').hide();
         $('.joint-cell.joint-link .marker-segment').hide();
 
-        // å¯¼å‡ºSVG
+        // µ¼³öSVG
         var svg = paper.svg;
         var serializer = new XMLSerializer();
         var svgString = serializer.serializeToString(svg);
 
-        // æ˜¾ç¤ºå¯¼èˆªç‚¹
+        // ÏÔÊ¾µ¼º½µã
         $('.joint-cell.joint-link .marker-vertices').show();
         $('.joint-cell.joint-link .marker-segment').show();
 
